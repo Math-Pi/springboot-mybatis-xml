@@ -1,6 +1,6 @@
 # SpringBoot-Mybatis(XML版)
 
-## 1、Maven依赖
+## 一、Maven依赖
 
 - 主要依赖：**mybatis-spring-boot-starter**
 
@@ -22,9 +22,7 @@
 </dependencies>
 ```
 
-## 2、配置
-
-### application.properties
+## 二、application.properties配置
 
 ```properties
 mybatis.config-location=classpath:mybatis/mybatis-config.xml
@@ -37,35 +35,28 @@ spring.datasource.password=123456
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-Spring Boot 会自动加载 `spring.datasource.*` 相关配置，数据源就会自动注入到 sqlSessionFactory 中，sqlSessionFactory 会自动注入到 Mapper 中，对了，你一切都不用管了，直接拿起来使用就行了。
-
-### mybatis-config.xml
+## 三、mybatis-config.xml
 
 ```xml
 <configuration>
-	<typeAliases>
-		<typeAlias alias="Integer" type="java.lang.Integer" />
-		<typeAlias alias="Long" type="java.lang.Long" />
-		<typeAlias alias="HashMap" type="java.util.HashMap" />
-		<typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
-		<typeAlias alias="ArrayList" type="java.util.ArrayList" />
-		<typeAlias alias="LinkedList" type="java.util.LinkedList" />
-	</typeAliases>
-</configuration>	
+    <!--使用自动扫描包来定义别名-->
+    <typeAliases>
+        <package name="com.mybatisxml.model"/>
+    </typeAliases>
+</configuration>
 ```
 
-### UserMapper.xml映射文件
+## 四、UserMapper.xml映射文件
 
 ```xml
 <mapper namespace="com.mybatisxml.mapper.UserMapper" >
-    <resultMap id="BaseResultMap" type="com.mybatisxml.model.User" >
+    <resultMap id="BaseResultMap" type="User" >
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="userName" property="userName" jdbcType="VARCHAR" />
         <result column="passWord" property="passWord" jdbcType="VARCHAR" />
         <result column="user_sex" property="userSex" javaType="com.mybatisxml.enums.UserSexEnum"/>
         <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
     </resultMap>
-
     <sql id="Base_Column_List" >
         id, userName, passWord, user_sex, nick_name
     </sql>
@@ -75,23 +66,20 @@ Spring Boot 会自动加载 `spring.datasource.*` 相关配置，数据源就会
         <include refid="Base_Column_List" />
         FROM users
     </select>
-
     <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
         FROM users
         WHERE id = #{id}
     </select>
-
-    <insert id="insert" parameterType="com.mybatisxml.model.User" >
+    <insert id="insert" parameterType="User" >
        INSERT INTO
        		users
        		(userName,passWord,user_sex)
        	VALUES
        		(#{userName}, #{passWord}, #{userSex})
     </insert>
-
-    <update id="update" parameterType="com.mybatisxml.model.User" >
+    <update id="update" parameterType="User" >
         UPDATE
         users
         SET
@@ -101,20 +89,16 @@ Spring Boot 会自动加载 `spring.datasource.*` 相关配置，数据源就会
         WHERE
         id = #{id}
     </update>
-
     <delete id="delete" parameterType="java.lang.Long" >
        DELETE FROM
        		 users
        WHERE
        		 id =#{id}
     </delete>
-
 </mapper>
 ```
 
-## 3、Mapper接口文件
-
-第三步是最关键的一块， Sql 生产都在这里
+## 五、Mapper接口文件
 
 ```java
 @Repository
@@ -127,7 +111,7 @@ public interface UserMapper {
 }
 ```
 
-## 4、启动类
+## 六、启动类
 
 在启动类中添加对 mapper 包扫描`@MapperScan`
 
@@ -141,7 +125,7 @@ public class SpringBootMybatisXmlApplication {
 }
 ```
 
-## 5、测试类
+## 七、测试类
 
 ```java
 @RunWith(SpringRunner.class)
@@ -182,4 +166,4 @@ class UserMapperTest {
 }
 ```
 
-- Assert.assertEquals();及其重载方法: 1. 如果两者一致, 程序继续往下运行. 2. 如果两者不一致, 中断测试方法, 抛出异常信息 AssertionFailedError .
+- Assert.assertEquals()及其重载方法: 1. 如果两者一致, 程序继续往下运行. 2. 如果两者不一致, 中断测试方法, 抛出异常信息 AssertionFailedError .
